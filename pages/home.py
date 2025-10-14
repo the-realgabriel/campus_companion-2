@@ -1,6 +1,6 @@
 import streamlit as st
 import datetime
-import matplotlib.pyplot as plt
+
 
 def home_page():
     st.markdown("""
