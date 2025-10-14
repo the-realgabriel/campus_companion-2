@@ -44,114 +44,146 @@ def load_data(path, default):
 st.markdown(
     """
     <style>
+    /* ---------------------------
+       Responsive Theme Variables
+       --------------------------- */
+    :root{
+        --bg-start: #f7fbff;
+        --bg-end: #ffffff;
+        --accent-1: #5c84d6;
+        --accent-2: #89aef5;
+        --muted: #3b556e;
+        --text: #16314a;
+        --card-bg: #ffffff;
+        --card-border: #eef4fb;
+        --sidebar-start: #1f3a6b;
+        --sidebar-end: #153056;
+    }
+
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:wght@500&display=swap');
 
-    /* Force app-wide font and base color */
-    * {
-        font-family: 'Poppins', sans-serif !important;
-        color: #16314a !important;
-    }
+    /* Reset + base */
+    * { box-sizing: border-box; font-family: 'Poppins', sans-serif !important; color: var(--text) !important; }
+    html, body, .stApp { height: 100%; margin: 0; padding: 0; }
 
-    /* App background */
+    /* App background & padding that scales with viewport */
     .stApp {
-        background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+        background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+        padding: clamp(12px, 2.2vw, 28px);
     }
 
-    /* Header / Title styles (use Playfair for headings for visual luxury) */
+    /* Title styles (fluid sizes) */
     .title-container h1 {
         font-family: 'Playfair Display', serif !important;
         color: #10293f !important;
-        font-size: 2.2rem;
+        font-size: clamp(1.4rem, 3.2vw, 2.2rem);
         margin: 0;
+        line-height: 1.05;
     }
     .title-sub {
-        color: #3b556e !important;
+        color: var(--muted) !important;
         margin-top: 6px;
         margin-bottom: 18px;
+        font-size: clamp(0.85rem, 1.6vw, 1rem);
     }
 
-    /* Sidebar: darker, high-contrast but still elegant */
+    /* Sidebar responsive width + styling */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1f3a6b 0%, #153056 100%) !important;
+        width: clamp(220px, 20vw, 300px) !important;
+        min-width: 200px;
+        background: linear-gradient(180deg, var(--sidebar-start) 0%, var(--sidebar-end) 100%) !important;
         color: #ffffff !important;
         border-right: 1px solid rgba(255,255,255,0.06);
-        padding-top: 18px;
+        padding: clamp(12px, 1.6vw, 22px) 12px 24px 12px;
     }
-    [data-testid="stSidebar"] * {
-        color: #ffffff !important;
+    [data-testid="stSidebar"] img {
+        max-width: 64px;
+        height: auto;
+        display: block;
+        margin-bottom: 8px;
     }
-    [data-testid="stSidebar"] .stRadio label {
-        font-weight: 500;
-        color: #ffffff !important;
-    }
+    [data-testid="stSidebar"] * { color: #ffffff !important; }
+    [data-testid="stSidebar"] .stRadio label { font-weight: 500; color: #ffffff !important; }
     [data-testid="stSidebar"] .stButton>button {
         background: rgba(255,255,255,0.06) !important;
         color: #ffffff !important;
     }
 
-    /* Card styling used across body content */
+    /* Card styling - flexible and adaptive */
     .card {
-        background: #ffffff;
-        border-radius: 14px;
-        padding: 16px;
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: clamp(10px, 1.6vw, 18px);
         margin-bottom: 12px;
         box-shadow: 0 8px 24px rgba(17,36,59,0.06);
-        border: 1px solid #eef4fb;
+        border: 1px solid var(--card-border);
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        word-break: break-word;
     }
 
-    /* Buttons (primary) */
+    /* Buttons (primary) - scale with viewport */
     .stButton>button {
-        background: linear-gradient(90deg, #5c84d6, #89aef5) !important;
+        background: linear-gradient(90deg, var(--accent-1), var(--accent-2)) !important;
         color: white !important;
         border: none !important;
         border-radius: 10px !important;
-        padding: 8px 14px !important;
+        padding: clamp(6px, 1.2vw, 10px) clamp(10px, 2vw, 14px) !important;
         font-weight: 600 !important;
+        font-size: clamp(0.85rem, 1.6vw, 0.95rem) !important;
         box-shadow: 0 6px 16px rgba(92,132,214,0.18) !important;
     }
-    .stButton>button:hover {
-        transform: translateY(-2px);
-    }
+    .stButton>button:hover { transform: translateY(-2px); }
 
-    /* Inputs */
-    input, textarea, select {
+    /* Inputs full width on small screens, comfortable on large */
+    input, textarea, select, .stTextInput>div, .stTextArea>div {
         border-radius: 8px !important;
         border: 1px solid #dbeefc !important;
         background-color: #fbfeff !important;
-        color: #16314a !important;
+        color: var(--text) !important;
+        width: 100% !important;
+        padding: 8px !important;
+        font-size: clamp(0.85rem, 1.4vw, 0.98rem) !important;
     }
 
     /* Metric labels & values */
-    [data-testid="stMetricValue"] {
-        color: #0b2a49 !important;
-        font-weight: 700 !important;
-    }
-    [data-testid="stMetricLabel"] {
-        color: #16314a !important;
-        font-weight: 600 !important;
-    }
+    [data-testid="stMetricValue"] { color: #0b2a49 !important; font-weight: 700 !important; font-size: clamp(1rem, 2.4vw, 1.2rem); }
+    [data-testid="stMetricLabel"] { color: var(--text) !important; font-weight: 600 !important; font-size: clamp(0.75rem, 1.6vw, 0.9rem); }
 
-    /* Tab styling */
-    div[data-baseweb="tab-list"] {
-        background: #f2f8ff !important;
-        border-radius: 10px !important;
-        padding: 6px !important;
-    }
-    button[data-baseweb="tab"] {
-        color: #0b2a49 !important;
-        font-weight: 600 !important;
-    }
+    /* Tabs */
+    div[data-baseweb="tab-list"] { background: #f2f8ff !important; border-radius: 10px !important; padding: 6px !important; overflow:auto; }
+    button[data-baseweb="tab"] { color: #0b2a49 !important; font-weight: 600 !important; font-size: clamp(0.82rem, 1.6vw, 0.95rem); }
     button[data-baseweb="tab"][aria-selected="true"] {
-        background: linear-gradient(90deg,#5c84d6,#89aef5) !important;
+        background: linear-gradient(90deg,var(--accent-1),var(--accent-2)) !important;
         color: #fff !important;
         box-shadow: 0 6px 14px rgba(92,132,214,0.14) !important;
     }
 
     /* Small responsive tweaks */
-    @media (max-width: 800px) {
-        .title-container h1 { font-size: 1.6rem !important; }
-        .card { padding: 12px !important; }
+    @media (max-width: 1200px) {
+        .stApp { padding: clamp(10px, 2vw, 20px); }
+        .card { padding: clamp(8px, 1.5vw, 14px); border-radius: 10px; }
     }
+
+    @media (max-width: 900px) {
+        /* Stack columns used by the app naturally; reduce sidebar to top toggled by Streamlit */
+        [data-testid="stSidebar"] { position: relative; width: 100% !important; min-width: unset; margin-bottom: 12px; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .title-container h1 { font-size: clamp(1.2rem, 4.2vw, 1.6rem); }
+        .stApp .block-container { padding-left: 8px !important; padding-right: 8px !important; }
+    }
+
+    @media (max-width: 520px) {
+        .card { padding: 10px; border-radius: 10px; }
+        .title-sub { margin-bottom: 10px; }
+        .stButton>button { padding: 8px 10px !important; font-size: 0.9rem !important; }
+        /* Make pie/plot areas scale by making the container scrollable when needed */
+        .stPlotlyChart, .stImage, .element-container { max-width: 100% !important; overflow-x: auto; }
+    }
+
+    /* Ensure long pieces wrap nicely */
+    .stMarkdown, .stText, .stExpander { word-wrap: break-word; white-space: normal; }
 
     </style>
     """,
